@@ -1,0 +1,61 @@
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+blogappenv/
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# Test / coverage tools
+.pytest_cache/
+.coverage
+.tox/
+.nox/
+.cache
+
+# MyPy
+.mypy_cache/
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+media/
+staticfiles/
+
+# Flask (if used)
+instance/
+.webassets-cache
+
+# Packaging
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.manifest
+*.spec
+
+# Pipenv / Poetry
+Pipfile.lock
+poetry.lock
+
+# dotenv
+.env
+.env.*
+
+# Jupyter
+.ipynb_checkpoints
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+*~
