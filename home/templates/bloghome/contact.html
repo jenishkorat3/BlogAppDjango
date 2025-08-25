@@ -2,6 +2,8 @@
 
 {% block title %}Contact Us{% endblock %}
 
+{% block contactactive %}active{% endblock contactactive %}
+
 {% block content %}
     <div class="container my-3">
         <h3>Contact Me</h3>
@@ -36,8 +38,8 @@
 {% block extra_scripts %}
 <script>
     {% if isSubmitted %}
-    alert('Thanks for contacting us. We will get back to you soon!');
-    document.location = '/contact';
+        alert('Thanks for contacting us. We will get back to you soon!');
+        document.location = '/contact';
     {% endif %}
 </script>
 {% endblock %}

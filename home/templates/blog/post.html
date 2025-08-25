@@ -1,7 +1,24 @@
 {% extends 'base.html' %}
 
-{% block title %} Blogpost{% endblock title %}
+{% block title %}{{ post.title }} | Blog{% endblock title %}
 
-{% block body %}
-
+{% block content %}
+<div class="container py-5">
+    <article class="card shadow-sm border-0 p-4">
+        <h1 class="display-4 fw-bold">{{ post.title }}</h1>
+        <div class="mb-3 text-muted">
+            <span>By <strong>{{ post.author }}</strong></span> &nbsp;|&nbsp;
+            <span>{{ post.timestamp|date:"F d, Y H:i" }}</span>
+        </div>
+        <hr>
+        <div class="fs-5 lh-lg">
+            {{ post.content|linebreaks }}
+        </div>
+        <div class="mt-4">
+            <a href="{% url 'index' %}" class="btn btn-outline-primary">
+                ← Back to Blog
+            </a>
+        </div>
+    </article>
+</div>
 {% endblock %}
