@@ -2,6 +2,7 @@ from django.shortcuts import render, HttpResponse, redirect
 from .models import Contact
 from blog.models import Post
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
 # Create your views here.
@@ -33,7 +34,7 @@ def search(request):
 
     return render(request, 'bloghome/search.html', {'query' : query ,'posts': posts})
 
-def signup(request):
+def handlesignup(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         fname = request.POST.get('fname')
@@ -63,3 +64,25 @@ def signup(request):
         return redirect('home')
     else:
         return HttpResponse('404 - Not Allowed')
+
+def handlelogin(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            messages.success(request, "You have been logged in successfully.")
+            return redirect('home')
+        else:
+            messages.error(request, "Invalid credentials. Please try again.")
+            return redirect('home')
+    else:
+        return HttpResponse('404 - Not Allowed')
+
+def handlelogout(request):
+    logout(request)
+    messages.success(request, "You have been logged out successfully.")
+    return redirect('home')
