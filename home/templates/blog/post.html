@@ -21,4 +21,35 @@
         </div>
     </article>
 </div>
+
+{% load static %}
+{% load humanize %}
+
+<div class="container">
+    <h2> Comments ({{ comments.count }})</h2>
+    {% if user.is_authenticated %}
+        <form action="{% url "blogComment" %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="exampleInputEmail1">Post Comment </label>
+                <input type="text" class="form-control" name="comment" placeholder="Enter comment here">
+            </div>
+            <input type="hidden" name="postSno" value="{{post.sno}}">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    {% else %}
+        <p>You must be logged in to post a comment.</p>
+    {% endif %}
+    {% for comment in comments %}
+    <div class="row my-3">
+        <div class="col-md-1">
+            <img class="rounded mx-auto d-block w-100 border border-dark p-2" src="{% static 'user.png' %}"  alt="user">
+        </div>
+        <div class="col-md-11">
+            <b> @{{comment.user.username}} </b> {{comment.timestamp | naturaltime}}
+            <div> {{comment.comment}} </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}

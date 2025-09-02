@@ -18,6 +18,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('blogComment/', views.postComment, name='blogComment'),
     path('', views.index, name='index'),
     path('<str:slug>', views.blogPost, name='blogPost'),
 ]
