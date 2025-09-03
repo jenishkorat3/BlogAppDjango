@@ -13,7 +13,7 @@
                     <strong class="d-inline-block mb-2 text-primary">Article By - {{ post.author }}</strong>
                     <h3 class="mb-0">{{ post.title }}</h3>
                     <div class="mb-1 text-muted">{{ post.timestamp }}</div>
-                    <p class="card-text mb-auto">{{ post.content | truncatechars:100 }}</p>
+                    <p class="card-text mb-auto"><div class="preview">{{ post.content|safe|truncatechars:100 }}</div></p>
                     <div class="my-2">
                         <a href="{% url "blogPost" post.slug %}" role="button" class="btn btn-primary">Continue reading</a>
                     </div>
@@ -28,3 +28,12 @@
         {% endfor %}
     </div>
 {% endblock %}
+
+{% block extra_scripts %}
+    <script>
+        let previews=document.getElementsByClassName('preview');
+        Array.from(previews).forEach((element)=>{
+            element.innerHTML=element.innerText;
+        });
+    </script>
+{% endblock extra_scripts %}

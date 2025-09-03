@@ -3,7 +3,13 @@
 {% block title %}{{ post.title }} | Blog{% endblock title %}
 
 {% block content %}
+
+{% load static %}
+{% load humanize %}
+{% load extras %}
+
 <div class="container py-5">
+    <!-- Blog Post -->
     <article class="card shadow-sm border-0 p-4">
         <h1 class="display-4 fw-bold">{{ post.title }}</h1>
         <div class="mb-3 text-muted">
@@ -12,7 +18,7 @@
         </div>
         <hr>
         <div class="fs-5 lh-lg">
-            {{ post.content|linebreaks }}
+            {{ post.content|safe|linebreaks }}
         </div>
         <div class="mt-4">
             <a href="{% url 'index' %}" class="btn btn-outline-primary">
@@ -22,34 +28,88 @@
     </article>
 </div>
 
-{% load static %}
-{% load humanize %}
+<!-- Comments Section -->
+<div class="container mt-5">
+    <h4 class="mb-4">💬 Comments ({{ comments.count }})</h4>
 
-<div class="container">
-    <h2> Comments ({{ comments.count }})</h2>
+    <!-- New Comment Form -->
     {% if user.is_authenticated %}
-        <form action="{% url "blogComment" %}" method="post">
+        <form action="{% url "blogComment" %}" method="post" class="mb-4">
             {% csrf_token %}
-            <div class="form-group">
-                <label for="exampleInputEmail1">Post Comment </label>
-                <input type="text" class="form-control" name="comment" placeholder="Enter comment here">
+            <div class="mb-3">
+                <textarea class="form-control" name="comment" rows="3" placeholder="Write a comment..." required></textarea>
             </div>
-            <input type="hidden" name="postSno" value="{{post.sno}}">
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <input type="hidden" name="postSno" value="{{ post.sno }}">
+            <button type="submit" class="btn btn-primary">Post Comment</button>
         </form>
     {% else %}
-        <p>You must be logged in to post a comment.</p>
+        <div class="alert alert-warning">You must be logged in to post a comment.</div>
     {% endif %}
+
+    <!-- Display Comments -->
     {% for comment in comments %}
-    <div class="row my-3">
-        <div class="col-md-1">
-            <img class="rounded mx-auto d-block w-100 border border-dark p-2" src="{% static 'user.png' %}"  alt="user">
+        <div class="row my-4 p-3 border rounded shadow-sm bg-light">
+            <!-- Avatar -->
+            <div class="col-md-1 d-flex justify-content-center">
+                <img class="rounded-circle border p-1" src="{% static 'user.png' %}" alt="user" style="width:60px; height:60px;">
+            </div>
+
+            <!-- Comment Content -->
+            <div class="col-md-11">
+                <div class="d-flex justify-content-between align-items-center">
+                    <b class="text-primary">@{{ comment.user.username }}</b>
+                    <small class="text-muted">{{ comment.timestamp | naturaltime }}</small>
+                </div>
+                <p class="mt-2 mb-1">{{ comment.comment }}</p>
+
+                <!-- Reply Button -->
+                <div class="reply mt-2">
+                    {% if user.is_authenticated %}
+                        <button class="btn btn-sm btn-outline-primary" type="button"
+                                data-toggle="collapse"
+                                data-target="#replyBox{{ comment.sno }}"
+                                aria-expanded="false"
+                                aria-controls="replyBox{{ comment.sno }}">
+                            Reply
+                        </button>
+
+                        <!-- Reply Box -->
+                        <div class="collapse mt-3" id="replyBox{{ comment.sno }}">
+                            <div class="card card-body">
+                                <form action="{% url "blogComment" %}" method="post">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <label class="form-label">Post a reply</label>
+                                        <input type="text" class="form-control mb-2" name="comment" placeholder="Enter reply here" required>
+                                        <input type="hidden" name="parentSno" value="{{ comment.sno }}">
+                                    </div>
+                                    <input type="hidden" name="postSno" value="{{ post.sno }}">
+                                    <button type="submit" class="btn btn-sm btn-primary">Submit</button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Replies Section -->
+                <div class="replies mt-3 ps-4 border-start">
+                    {% for reply in replyDict|get_val:comment.sno %}
+                        <div class="row my-2">
+                            <div class="col-md-1 d-flex justify-content-center">
+                                <img class="rounded-circle border p-1" src="{% static 'user.png' %}" alt="user" style="width:45px; height:45px;">
+                            </div>
+                            <div class="col-md-11">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <b class="text-secondary">{{ reply.user.username }}</b>
+                                    <small class="text-muted">{{ reply.timestamp | naturaltime }}</small>
+                                </div>
+                                <p class="mt-1 mb-0">{{ reply.comment }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
-        <div class="col-md-11">
-            <b> @{{comment.user.username}} </b> {{comment.timestamp | naturaltime}}
-            <div> {{comment.comment}} </div>
-        </div>
-    </div>
     {% endfor %}
 </div>
 {% endblock %}
